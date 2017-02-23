@@ -24,7 +24,6 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -32,15 +31,15 @@ import (
 
 	"github.com/kr/pretty"
 
-	"go.uber.org/yarpc"
 	"go.uber.org/yarpc/encoding/json"
 )
 
 func main() {
-	config, err := ioutil.ReadFile("client.yaml")
+	config, err := os.Open("client.yaml")
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer config.Close()
 
 	builder, err := loader.LoadYAML(config)
 	if err != nil {
@@ -48,12 +47,11 @@ func main() {
 	}
 	pretty.Println("Loaded configuration:", builder)
 
-	cfg, err := builder.Build()
+	d, err := builder.BuildDispatcher()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	d := yarpc.NewDispatcher(cfg)
 	if err := d.Start(); err != nil {
 		log.Fatal(err)
 	}
