@@ -93,7 +93,7 @@ func main() {
 		case "exit":
 			break
 		default:
-			fmt.Println("invalid command %q", cmd)
+			fmt.Println("invalid command", cmd)
 		}
 	}
 
